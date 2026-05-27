@@ -2,8 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { getCustomerProfile, updateCustomerProfile, uploadCustomerProfilePicture, deleteCustomerProfilePicture } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 
-const BASE_URL = 'http://localhost:5000';
-
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://talentexpo-production.up.railway.app';
 // Smart URL resolver: Cloudinary URLs are already full, local paths need BASE_URL prefix
 const resolveUrl = (url) => {
   if (!url) return '';

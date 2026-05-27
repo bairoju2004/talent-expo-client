@@ -1,0 +1,2 @@
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://talentexpo-production.up.railway.app';
+export const API_BASE = import.meta.env.VITE_API_URL || 'https://talentexpo-production.up.railway.app/api';

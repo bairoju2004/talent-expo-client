@@ -19,8 +19,8 @@ import { useAuth } from '../context/AuthContext';
 import NotificationCenter from '../components/NotificationCenter';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:5000');
-const BASE_URL = 'http://localhost:5000';
+const socket = io(import.meta.env.VITE_API_BASE_URL || 'https://talentexpo-production.up.railway.app');
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://talentexpo-production.up.railway.app';
 // Smart URL resolver: Cloudinary URLs are already full, local paths need BASE_URL prefix
 const resolveUrl = (url) => {
   if (!url) return '';

@@ -4,7 +4,7 @@ import { getMyBookings, updateBookingStatus, getUnreadCount } from '../api/servi
 import { useAuth } from '../context/AuthContext';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:5000');
+const socket = io(import.meta.env.VITE_API_BASE_URL || 'https://talentexpo-production.up.railway.app');
 
 const STATUS_STYLES = {
   pending:   'bg-yellow-100 text-yellow-800',
@@ -19,15 +19,12 @@ function ArtistDashboardPage() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
-  // Unread message counts per booking
   const [unreadCounts, setUnreadCounts] = useState({});
 
   useEffect(() => {
     getMyBookings()
       .then(async (res) => {
         setBookings(res.data);
-
-        // Fetch initial unread counts for each booking
         const counts = {};
         await Promise.all(
           res.data.map(async (b) => {
@@ -38,13 +35,10 @@ function ArtistDashboardPage() {
           })
         );
         setUnreadCounts(counts);
-
-        // Join all booking rooms to receive real-time messages
         res.data.forEach((b) => socket.emit('joinRoom', b._id));
       })
       .finally(() => setLoading(false));
 
-    // Listen for new messages — increment badge if message is from the other person
     socket.on('receiveMessage', (message) => {
       if (message.sender?.toString() !== user?._id?.toString()) {
         setUnreadCounts((prev) => ({
@@ -69,7 +63,6 @@ function ArtistDashboardPage() {
   };
 
   const handleOpenChat = (bookingId) => {
-    // Clear badge when opening chat
     setUnreadCounts((prev) => ({ ...prev, [bookingId]: 0 }));
     navigate(`/chat/${bookingId}`);
   };
@@ -90,8 +83,6 @@ function ArtistDashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4">
       <div className="max-w-4xl mx-auto">
-
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
@@ -105,7 +96,6 @@ function ArtistDashboardPage() {
           </button>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-2xl p-5 shadow-md text-center">
             <p className="text-3xl font-bold text-gray-800">{stats.total}</p>
@@ -125,7 +115,6 @@ function ArtistDashboardPage() {
           </div>
         </div>
 
-        {/* Bookings */}
         {bookings.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl shadow-md">
             <p className="text-5xl mb-4">🎭</p>
@@ -137,7 +126,6 @@ function ArtistDashboardPage() {
               const unread = unreadCounts[booking._id] || 0;
               return (
                 <div key={booking._id} className="bg-white rounded-2xl shadow-md p-6">
-
                   <div className="flex items-start justify-between flex-wrap gap-3">
                     <div>
                       <p className="text-sm text-gray-400">Customer</p>
@@ -166,15 +154,12 @@ function ArtistDashboardPage() {
                     <p className="text-gray-600 text-sm mt-3 italic">"{booking.message}"</p>
                   )}
 
-                  {/* Open Chat button with unread badge */}
                   <div className="mt-4 pt-4 border-t border-gray-100">
                     <button
                       onClick={() => handleOpenChat(booking._id)}
                       className="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 relative"
                     >
                       💬 Open Chat
-
-                      {/* Pulsing new message notification */}
                       {unread > 0 && (
                         <span className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
                           <span className="relative flex h-3 w-3">
@@ -189,7 +174,6 @@ function ArtistDashboardPage() {
                     </button>
                   </div>
 
-                  {/* Accept / Reject for pending bookings */}
                   {booking.status === 'pending' && (
                     <div className="mt-3 flex gap-3">
                       <button
@@ -209,7 +193,6 @@ function ArtistDashboardPage() {
                     </div>
                   )}
 
-                  {/* Mark as Completed for accepted bookings */}
                   {booking.status === 'accepted' && (
                     <div className="mt-3">
                       <button
@@ -221,13 +204,11 @@ function ArtistDashboardPage() {
                       </button>
                     </div>
                   )}
-
                 </div>
               );
             })}
           </div>
         )}
-
       </div>
     </div>
   );

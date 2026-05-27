@@ -4,8 +4,7 @@ import { getMyBookings, getUnreadCount } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:5000');
-
+const socket = io(import.meta.env.VITE_API_BASE_URL || 'https://talentexpo-production.up.railway.app');
 const STATUS_STYLES = {
   pending:   'bg-yellow-100 text-yellow-800 border-yellow-200',
   accepted:  'bg-green-100 text-green-800 border-green-200',
