@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+.notification-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #f8fafc;
+}
+
+.notification-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.notification-scrollbar::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.notification-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #9ca3af;
+  border-radius: 9999px;
+  border: 2px solid #f8fafc;
+}
+
+.notification-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
